@@ -4,6 +4,7 @@ from datetime import date
 from rest_framework import serializers
 from utilidades.serializers import DynamicFieldsModelSerializer
 
+
 class PessoaSerializer(DynamicFieldsModelSerializer):
     endereco_completo = serializers.SerializerMethodField()
     sexo_descricao = serializers.SerializerMethodField()
@@ -37,4 +38,50 @@ class PessoaSerializer(DynamicFieldsModelSerializer):
             else:
                 return 'Membro Menor'
         else:
-            return 'Visitante' 
+            return 'Visitante'
+        
+        
+class MembroSerializer(DynamicFieldsModelSerializer):
+    nome = serializers.SerializerMethodField()
+    data_nascimento = serializers.SerializerMethodField()
+    info_ata = serializers.SerializerMethodField()
+    data_recepcao = serializers.DateField(format='%d/%m/%Y')
+    situacao = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Membro
+        fields = [
+            'id',
+            'nome',
+            'data_nascimento',
+            'livro',
+            'ata',
+            'folha',
+            'numero',
+            'ano',
+            'data_recepcao',
+            'situacao',
+            'info_ata',
+            'ausente',
+            'baixa_frequencia',
+            'necessidades_especiais',
+            'profissao_fe',
+        ]
+
+    def get_nome(self, obj):
+        return obj.membro.nome
+    
+    def get_data_nascimento(self, obj):
+        return obj.membro.data_nascimento.strftime('%d/%m/%Y')
+
+    def get_situacao(self, obj):
+        if obj.profissao_fe:
+            return 'Membro Maior'
+        else:
+            return 'Membro Menor'
+    
+    def get_info_ata(self, obj):
+        infoata = f'livro {obj.livro}, ata {obj.ata}'
+        if obj.folha:
+            infoata += f', folha {obj.folha}'
+        return infoata

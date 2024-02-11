@@ -2,7 +2,7 @@ from .models import Pessoa, Membro
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
 
-from .serializers import PessoaSerializer
+from .serializers import PessoaSerializer, MembroSerializer
 
 # Create your views here.
 class PessoaViewSet(ModelViewSet):
@@ -19,4 +19,19 @@ class PessoaViewSet(ModelViewSet):
                 fields=('id', 'nome', 'data_nascimento',
                         'endereco_completo', 'endereco_cep',
                         'sexo_descricao', 'idade', 'situacao'))
+        return Response(serializer.data)
+    
+    
+class MembroViewSet(ModelViewSet):
+    """
+    API endpoint that allows users to be viewed or edited.
+    """
+    queryset = Membro.objects.all().order_by('membro__nome')
+    serializer_class = MembroSerializer
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        serializer = MembroSerializer(queryset,
+                many=True,
+                fields=('id', 'nome', 'data_nascimento', 'info_ata', 'ano','situacao'))
         return Response(serializer.data)

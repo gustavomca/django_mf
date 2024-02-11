@@ -42,3 +42,24 @@ class Membro(models.Model):
 
     def __str__(self):
         return f'{self.membro.nome} ({self.numero})'
+    
+
+class Oficial(models.Model):
+    cargo_choices = [
+        ('Pr', 'Pastor'),
+        ('Pb', 'Presbítero'),
+        ('Dc', 'Diácono'),
+    ]
+
+    membro = models.OneToOneField(Pessoa, on_delete=models.CASCADE)
+    cargo = models.CharField(max_length=2, choices=cargo_choices)
+    inicio_mandato = models.DateField()
+    fim_mandato = models.DateField()
+    ativo = models.BooleanField(default=True)
+
+    def __str__(self):
+        return f'{self.membro.nome} ({self.cargo.get_display_name()})'
+    
+    def save(self, *args, **kwargs):
+        self.fim_mandato = self.inicio_mandato.replace(year=self.inicio_mandato.year + 5)
+        super(Oficial, self).save(*args, **kwargs)
