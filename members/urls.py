@@ -12,6 +12,9 @@ router.register(r'pessoa',
 router.register(r'membro',
                 views.MembroViewSet,
                 basename='membro'),
+router.register(r'oficial',
+                views.OficialViewSet,
+                basename='oficial'),
 
 urlpatterns = [
     path('', include(router.urls)),

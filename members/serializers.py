@@ -1,4 +1,4 @@
-from .models import Pessoa, Membro
+from .models import Pessoa, Membro, Oficial
 from datetime import date
 
 from rest_framework import serializers
@@ -85,3 +85,33 @@ class MembroSerializer(DynamicFieldsModelSerializer):
         if obj.folha:
             infoata += f', folha {obj.folha}'
         return infoata
+
+
+class OficialSerializer(DynamicFieldsModelSerializer):
+    nome = serializers.SerializerMethodField()
+    cargo_descricao = serializers.SerializerMethodField()
+    inicio_mandato = serializers.DateField(format='%d/%m/%Y')
+    fim_mandato = serializers.DateField(format='%d/%m/%Y')
+    mandato_vigente = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Oficial
+        fields = [
+            'id',
+            'nome',
+            'cargo',
+            'cargo_descricao',
+            'inicio_mandato',
+            'fim_mandato',
+            'mandato_vigente',
+        ]
+
+    def get_nome(self, obj):
+        return obj.membro.nome
+
+    def get_cargo_descricao(self, obj):
+        return obj.get_cargo_display()
+
+    def get_mandato_vigente(self, obj):
+        today = date.today()
+        return obj.inicio_mandato <= today and obj.fim_mandato >= today
