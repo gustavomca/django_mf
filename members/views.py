@@ -17,5 +17,6 @@ class PessoaViewSet(ModelViewSet):
         serializer = PessoaSerializer(queryset,
                 many=True,
                 fields=('id', 'nome', 'data_nascimento',
-                        'endereco_completo', 'endereco_cep', 'sexo_descricao', 'idade'))
+                        'endereco_completo', 'endereco_cep',
+                        'sexo_descricao', 'idade', 'situacao'))
         return Response(serializer.data)

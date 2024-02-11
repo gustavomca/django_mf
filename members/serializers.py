@@ -9,6 +9,7 @@ class PessoaSerializer(DynamicFieldsModelSerializer):
     sexo_descricao = serializers.SerializerMethodField()
     idade = serializers.SerializerMethodField()
     data_nascimento = serializers.DateField(format='%d/%m/%Y')
+    situacao = serializers.SerializerMethodField()
 
     class Meta:
         model = Pessoa
@@ -27,4 +28,13 @@ class PessoaSerializer(DynamicFieldsModelSerializer):
     
     def get_idade(self, obj):
         today = date.today()
-        return today.year - obj.data_nascimento.year - ((today.month, today.day) < (obj.data_nascimento.month, obj.data_nascimento.day))  
+        return today.year - obj.data_nascimento.year - ((today.month, today.day) < (obj.data_nascimento.month, obj.data_nascimento.day))
+
+    def get_situacao(self, obj):
+        if hasattr(obj, 'membro'):
+            if obj.membro.profissao_fe:
+                return 'Membro Maior'
+            else:
+                return 'Membro Menor'
+        else:
+            return 'Visitante' 
