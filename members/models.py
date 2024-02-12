@@ -51,7 +51,7 @@ class Oficial(models.Model):
         ('Dc', 'Diácono'),
     ]
 
-    membro = models.OneToOneField(Pessoa, on_delete=models.CASCADE)
+    membro = models.ForeignKey(Pessoa, on_delete=models.CASCADE)
     cargo = models.CharField(max_length=2, choices=cargo_choices)
     inicio_mandato = models.DateField()
     fim_mandato = models.DateField(blank=True)

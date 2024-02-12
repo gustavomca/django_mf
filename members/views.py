@@ -1,6 +1,9 @@
 from .models import Pessoa, Membro, Oficial
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
+from django_filters import rest_framework as filters
+
+from .filters import OficialFilter
 
 from .serializers import PessoaSerializer, MembroSerializer, OficialSerializer
 
@@ -35,6 +38,12 @@ class MembroViewSet(ModelViewSet):
                 many=True,
                 fields=('id', 'nome', 'data_nascimento', 'info_ata', 'ano','situacao'))
         return Response(serializer.data)
+    
+    def create(self, request, *args, **kwargs):
+        serializer = MembroSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=201)
 
 
 class OficialViewSet(ModelViewSet):
@@ -43,9 +52,16 @@ class OficialViewSet(ModelViewSet):
     """
     queryset = Oficial.objects.all().order_by('membro__nome')
     serializer_class = OficialSerializer
+    filter_backends = (filters.DjangoFilterBackend, )
+    filterset_class = OficialFilter
 
     def list(self, request, *args, **kwargs):
-        queryset = self.get_queryset()
+        queryset = self.filter_queryset(self.get_queryset())
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
         serializer = OficialSerializer(queryset,
                 many=True,
                 fields=('id', 'nome', 'cargo_descricao', 'inicio_mandato', 'fim_mandato','mandato_vigente'))

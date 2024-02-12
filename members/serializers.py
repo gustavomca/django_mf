@@ -66,6 +66,7 @@ class MembroSerializer(DynamicFieldsModelSerializer):
             'baixa_frequencia',
             'necessidades_especiais',
             'profissao_fe',
+            'membro'
         ]
 
     def get_nome(self, obj):
@@ -91,7 +92,7 @@ class OficialSerializer(DynamicFieldsModelSerializer):
     nome = serializers.SerializerMethodField()
     cargo_descricao = serializers.SerializerMethodField()
     inicio_mandato = serializers.DateField(format='%d/%m/%Y')
-    fim_mandato = serializers.DateField(format='%d/%m/%Y')
+    fim_mandato = serializers.DateField(required=False, format='%d/%m/%Y')
     mandato_vigente = serializers.SerializerMethodField()
 
     class Meta:
@@ -104,6 +105,7 @@ class OficialSerializer(DynamicFieldsModelSerializer):
             'inicio_mandato',
             'fim_mandato',
             'mandato_vigente',
+            'membro'
         ]
 
     def get_nome(self, obj):
